@@ -35,16 +35,8 @@ Consistent ==
           /\ Cardinality({x \in 1..Len(DDL) : Selected[x] # None}) = Cardinality({Selected[x] : x \in 1..Len(DDL)} \ {None}) \* unique values
           
 
-\* CHOOSE x \in 1..15 : x \notin {[ k \in 1..8 |-> k ][i] : i \in 1..8}
-\* notice that in order for this to work 1..15 has to have more elements than 1..8
-\* /\ Cardinality(Enabled \ {x \in 1..Len(DDL) : Selected[x] # None}) <= 1
-\* << {"a", "b", "c"}, {"a", "b", "c"}, {"a", "b", "c"} >>
-\* /\ Len([k \in {x \in 1..Len(DDL) : Selected[x] # None} |-> Selected[k]]) = Cardinality({x \in 1..Len(DDL) : Selected[x] # None})
-\*/\ Enabled \ {x \in 1..Len(DDL) : Selected[x] # None} = { CHOOSE y \in Enabled : (\A z \in Enabled : y >= z) } \/ Enabled \ {x \in 1..Len(DDL) : Selected[x] # None} = {} \* only the last enabled can be not selected
-
-
 =============================================================================
 \* Modification History
-\* Last modified Wed Jan 02 22:18:25 PST 2019 by david
+\* Last modified Wed Jan 02 22:23:11 PST 2019 by david
 \* Last modified Wed Jan 02 16:28:49 PST 2019 by algorist
 \* Created Fri Dec 21 21:49:25 PST 2018 by algorist
