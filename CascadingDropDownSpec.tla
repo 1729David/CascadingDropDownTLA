@@ -1,4 +1,4 @@
-------------------------------- MODULE Tester -------------------------------
+------------------------------- MODULE CascadingDropDownSpec -------------------------------
 EXTENDS Integers, Sequences, FiniteSets
 
 CONSTANTS DDL, Available, None
@@ -45,5 +45,6 @@ Consistent ==
 
 =============================================================================
 \* Modification History
+\* Last modified Wed Jan 02 22:18:25 PST 2019 by david
 \* Last modified Wed Jan 02 16:28:49 PST 2019 by algorist
 \* Created Fri Dec 21 21:49:25 PST 2018 by algorist
