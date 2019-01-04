@@ -9,14 +9,23 @@ VARIABLES Enabled,              \* The set of enabled drop downs
           Selected              \* The tuple of selected values 
 
 ASSUME \A a \in 1..Len(Available) : None \notin Available[a]
+    (***********************************************************************)
+    (* The None value is assumed to not be any of the available values     *)
+    (* for any of the drop downs.                                          *)
+    (***********************************************************************)
 
 --------------------------------------------------------------------------------------------
 
 (***************************************************************************)
+(* Type correctness invariant                                              *)
+(***************************************************************************)
+CDDTypeOK == /\ Enabled \in SUBSET { k : k \in 1..Len(DDL) }
+
+(***************************************************************************)
 (* The intial predicate                                                    *)
 (***************************************************************************)
-Init == /\ Enabled = { 1 }
-        /\ Selected = [ k \in 1..Len(DDL) |-> None ]
+CDDInit == /\ Enabled = { 1 }
+           /\ Selected = [ k \in 1..Len(DDL) |-> None ]
 
 (***************************************************************************)
 (* Define the actions that may be perfomed with the cascading drop down.   *)
@@ -35,7 +44,7 @@ Unselect(a) == /\ a \in Enabled
                /\ Enabled' = { k \in Enabled : k <= a }
                /\ Selected' = [k \in 1..Len(DDL) |-> IF k < a THEN Selected[k] ELSE None]
 
-Next == \E a \in 1..Len(DDL) : Select(a) \/ Unselect(a)
+CDDNext == \E a \in 1..Len(DDL) : Select(a) \/ Unselect(a)
 
 (***************************************************************************)
 (* Invariance properties of the specification:                             *)
@@ -44,7 +53,7 @@ Next == \E a \in 1..Len(DDL) : Select(a) \/ Unselect(a)
 (*  - Every drop down that is selected is also enabled AND                 *)
 (*  - There are no repeated selected values                                *)
 (***************************************************************************)
-Consistent == 
+CDDConsistent == 
           /\ 1 \in Enabled 
           /\ LET EnabledMinusSelected == Enabled \ {x \in 1..Len(DDL) : Selected[x] # None}
                  LastEnabled == { CHOOSE y \in Enabled : (\A z \in Enabled : y >= z) }
@@ -52,9 +61,13 @@ Consistent ==
           /\ {x \in 1..Len(DDL) : Selected[x] # None} \ Enabled = {}
           /\ Cardinality({x \in 1..Len(DDL) : Selected[x] # None}) = Cardinality({Selected[x] : x \in 1..Len(DDL)} \ {None})
           
+(***************************************************************************)
+(* Complete cascading drop down spec                                       *)
+(***************************************************************************)
+CDDSpec == CDDInit /\ [][CDDNext]_<<Enabled, Selected>>
 
 =============================================================================
 \* Modification History
-\* Last modified Thu Jan 03 16:05:10 PST 2019 by david
+\* Last modified Thu Jan 03 16:34:28 PST 2019 by david
 \* Last modified Wed Jan 02 16:28:49 PST 2019 by algorist
 \* Created Fri Dec 21 21:49:25 PST 2018 by algorist
