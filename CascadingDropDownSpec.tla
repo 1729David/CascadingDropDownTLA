@@ -20,6 +20,7 @@ ASSUME \A a \in 1..Len(Available) : None \notin Available[a]
 (* Type correctness invariant                                              *)
 (***************************************************************************)
 CDDTypeOK == /\ Enabled \in SUBSET { k : k \in 1..Len(DDL) }
+             /\ \A k \in 1..Len(DDL) : Selected[k] \in Available[k] \cup { None }
 
 (***************************************************************************)
 (* The intial predicate                                                    *)
@@ -72,6 +73,6 @@ CDDSpec == CDDInit /\ [][CDDNext]_<<Enabled, Selected>>
 
 =============================================================================
 \* Modification History
-\* Last modified Thu Jan 03 16:59:01 PST 2019 by david
+\* Last modified Thu Jan 03 21:36:02 PST 2019 by david
 \* Last modified Wed Jan 02 16:28:49 PST 2019 by algorist
 \* Created Fri Dec 21 21:49:25 PST 2018 by algorist
