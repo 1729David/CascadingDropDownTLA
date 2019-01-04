@@ -31,18 +31,21 @@ CDDInit == /\ Enabled = { 1 }
 (* Define the actions that may be perfomed with the cascading drop down.   *)
 (* Then define the next state as the disjuction of these actions.          *)
 (***************************************************************************)
-Select(a) == /\ a \in Enabled
-             /\ Enabled' = { k \in 1..Len(DDL) : k <= (a + 1) /\ k <= Len(DDL) }
-             /\ Selected' = [k \in 1..Len(DDL) |-> IF k < a 
-                                                    THEN Selected[k] 
-                                                    ELSE 
-                                                        IF k = a
-                                                        THEN CHOOSE x \in Available[a] : x \notin {Selected[i] : i \in 1..(a-1)}
-                                                        ELSE None]
+Select(a) == 
+  /\ a \in Enabled
+  /\ Enabled' = { k \in 1..Len(DDL) : k <= (a + 1) /\ k <= Len(DDL) }
+  /\ Selected' = [k \in 1..Len(DDL) |-> 
+        IF k < a 
+        THEN Selected[k] 
+        ELSE 
+            IF k = a
+            THEN CHOOSE x \in Available[a] : x \notin {Selected[i] : i \in 1..(a-1)}
+            ELSE None]
 
-Unselect(a) == /\ a \in Enabled
-               /\ Enabled' = { k \in Enabled : k <= a }
-               /\ Selected' = [k \in 1..Len(DDL) |-> IF k < a THEN Selected[k] ELSE None]
+Unselect(a) == 
+  /\ a \in Enabled
+  /\ Enabled' = { k \in Enabled : k <= a }
+  /\ Selected' = [k \in 1..Len(DDL) |-> IF k < a THEN Selected[k] ELSE None]
 
 CDDNext == \E a \in 1..Len(DDL) : Select(a) \/ Unselect(a)
 
@@ -54,13 +57,14 @@ CDDNext == \E a \in 1..Len(DDL) : Select(a) \/ Unselect(a)
 (*  - There are no repeated selected values                                *)
 (***************************************************************************)
 CDDConsistent == 
-          /\ 1 \in Enabled 
-          /\ LET EnabledMinusSelected == Enabled \ {x \in 1..Len(DDL) : Selected[x] # None}
-                 LastEnabled == { CHOOSE y \in Enabled : (\A z \in Enabled : y >= z) }
-             IN EnabledMinusSelected = LastEnabled \/ EnabledMinusSelected = {}
-          /\ {x \in 1..Len(DDL) : Selected[x] # None} \ Enabled = {}
-          /\ Cardinality({x \in 1..Len(DDL) : Selected[x] # None}) = Cardinality({Selected[x] : x \in 1..Len(DDL)} \ {None})
-          
+  /\ 1 \in Enabled 
+  /\ LET EnabledMinusSelected == Enabled \ {x \in 1..Len(DDL) : Selected[x] # None}
+         LastEnabled == { CHOOSE y \in Enabled : (\A z \in Enabled : y >= z) }
+     IN EnabledMinusSelected = LastEnabled \/ EnabledMinusSelected = {}
+  /\ {x \in 1..Len(DDL) : Selected[x] # None} \ Enabled = {}
+  /\ Cardinality({x \in 1..Len(DDL) : Selected[x] # None}) = 
+        Cardinality({Selected[x] : x \in 1..Len(DDL)} \ {None})
+  
 (***************************************************************************)
 (* Complete cascading drop down spec                                       *)
 (***************************************************************************)
@@ -68,6 +72,6 @@ CDDSpec == CDDInit /\ [][CDDNext]_<<Enabled, Selected>>
 
 =============================================================================
 \* Modification History
-\* Last modified Thu Jan 03 16:34:28 PST 2019 by david
+\* Last modified Thu Jan 03 16:59:01 PST 2019 by david
 \* Last modified Wed Jan 02 16:28:49 PST 2019 by algorist
 \* Created Fri Dec 21 21:49:25 PST 2018 by algorist
